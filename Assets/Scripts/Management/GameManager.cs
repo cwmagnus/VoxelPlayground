@@ -1,16 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Threading;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Management.Registry;
 using WorldGeneration.Blocks;
+using Items;
+using Core;
 
 namespace Management
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private TexturePacker texturePacker;
-
         public static GameManager Instance { get; private set; }
-        public BlockRegistry BlockRegistry { get; private set; } = new BlockRegistry();
-        public TexturePacker TexturePacker { get => texturePacker; }
+
+        public Registry<Block> BlockRegistry { get; private set; } = new Registry<Block>();
+        public Registry<Item> ItemRegistry { get; private set; } = new Registry<Item>();
+        public TexturePack BlockTexturePack { get; private set; } = new TexturePack();
+        public TexturePack ItemTexturePack { get; private set; } = new TexturePack();
 
         private void Awake()
         {
@@ -27,10 +32,17 @@ namespace Management
 
         private void Start()
         {
-            BlockRegistry.RegisterBlock(new Block("Air"));
-            BlockRegistry.RegisterBlock(new Block("Dirt", "dirt", BlockType.Opaque));
-            BlockRegistry.RegisterBlock(new Block("Dirt2", "blue", BlockType.Opaque));
-            TexturePacker.GenerateTextureAtlas();
+            LoadResources();
+            BlockTexturePack.GenerateTextureAtlas(2000, 5);
+            ItemTexturePack.GenerateTextureAtlas(2000, 5);
+            SceneManager.LoadScene(1);
+        }
+
+        private void LoadResources()
+        {
+            CorePlugin corePlugin = new CorePlugin();
+            corePlugin.RegisterBlocks(BlockRegistry);
+            corePlugin.RegisterItems(ItemRegistry);
         }
     }
 }

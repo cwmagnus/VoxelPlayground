@@ -1,27 +1,23 @@
 ﻿using Management;
+using Items;
 
 namespace WorldGeneration.Blocks
 {
-    public class Block
+    public abstract class Block
     {
-        public ushort ID { get; set; }
-        public string Name { get; private set; }
-        public BlockType BlockType { get; private set; }
-        public ushort Hardness { get; private set; }
+        public string Name { get; protected set; }
+        public BlockType BlockType { get; protected set; }
+        public byte Hardness { get; protected set; }
 
-        public Block(string name, BlockType blockType = BlockType.Transparent, ushort hardness = 0)
+        public Block(Item inventoryItem)
         {
-            Name = name;
-            BlockType = blockType;
-            Hardness = hardness;
+            GameManager.Instance.ItemRegistry.Register(inventoryItem);
         }
 
-        public Block(string name, string textureName, BlockType blockType = BlockType.Transparent, ushort hardness = 0)
+        public Block(Item inventoryItem, string texturePath)
         {
-            Name = name;
-            BlockType = blockType;
-            Hardness = hardness;
-            GameManager.Instance.TexturePacker.AddTextureName(textureName);
+            GameManager.Instance.ItemRegistry.Register(inventoryItem);
+            GameManager.Instance.BlockTexturePack.AddTexture($"Textures/Blocks/{texturePath}");
         }
     }
 }
